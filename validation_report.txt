@@ -1,0 +1,129 @@
+VALIDATION REPORT  (group seed 1)
+
+== cases.xlsx ==
+
+1-00 PASS
+1-01 PASS
+1-02 PASS
+1-03 PASS
+1-04 PASS
+1-05 PASS
+1-06 PASS
+1-07 PASS
+1-08 PASS
+1-09 PASS
+1-10 PASS
+1-11 PASS
+1-12 PASS
+1-13 PASS
+1-14 PASS
+1-15 PASS
+1-16 PASS
+1-17 PASS
+1-18 PASS
+1-19 PASS
+1-20 PASS
+1-21 PASS
+1-22 PASS
+1-23 PASS
+1-24 PASS
+1-25 PASS
+1-26 PASS
+1-27 PASS
+1-28 PASS
+1-29 PASS
+1-30 PASS
+1-31 PASS
+1-32 PASS
+1-33 PASS
+1-34 PASS
+1-35 PASS
+1-36 PASS
+1-37 PASS
+1-38 PASS
+1-39 PASS
+1-40 PASS
+1-41 PASS
+1-42 PASS
+1-43 PASS
+1-44 PASS
+1-45 PASS
+1-46 PASS
+1-47 PASS
+1-48 PASS
+1-49 PASS
+GLOBAL PASS
+RESULT: PASS
+
+== Rejection of broken copies (validator/tests) ==
+
+broken_A_header_renamed.xlsx  expected V1  -> REJECTED
+    V1: a sheet has no rows for this case
+    V1: header of crates wrong
+broken_A_duplicate_serial.xlsx  expected V2  -> REJECTED
+    V2: serials not distinct 8-digit
+broken_A_repeated_road_pair.xlsx  expected V3  -> REJECTED
+    V3: road 1: repeated pair
+broken_A_disconnected_network.xlsx  expected V4  -> REJECTED
+    V3: road_no not 0..E-1
+    V4: network not connected before closures
+    V3: wave references a missing road
+broken_A_pattern_counts_zero.xlsx  expected V5  -> REJECTED
+    V5: pattern 0 count 0 but true count 1
+    V5: pattern 1 count 0 but true count 1
+    V5: pattern 2 count 0 but true count 1
+    V5: pattern 3 count 0 but true count 1
+broken_A_wrong_claim.xlsx  expected V5  -> REJECTED
+    V5: cargo_opt wrong
+broken_A_planted_assignment_flipped.xlsx  expected V6  -> REJECTED
+    V6: planted assignment violates a safety rule
+broken_A_cover_node_removed.xlsx  expected V3  -> REJECTED
+    V3: cover nodes invalid or not sensor_k distinct nodes
+broken_A_wrong_scenario.xlsx  expected V1  -> REJECTED
+    V1: wrong scenario for case_no
+    V7: S5 avg degree 5.43
+    V7: S5 a location has more than 4 roads
+    V7: S5 all targets still reachable after all waves
+broken_A_no_hospital.xlsx  expected V3  -> REJECTED
+    V3: needs at least one S and one H
+broken_A_float_in_integer_column.xlsx  expected V1  -> REJECTED
+    V1: windows.value not an integer (12.5)
+broken_A_extra_sheet.xlsx  expected V1  -> REJECTED
+    V1: sheets are ['cases', 'crates', 'locations', 'roads', 'waves', 'radio_log', 'radio_patterns', 'radio_reports', 'windows', 'incidents', 'sites', 'tour', 'pipeline_dims', 'drum_prices', 'sensor_edges', 'sensor_cover', 'safety_rules', 'safety_planted', 'rations', 'claims', 'notes'], expected the 20 sheets in order
+broken_A_rare_crates_removed.xlsx  expected V7  -> REJECTED
+    V7: S4 rare crates under 10%
+broken_B_waves_overlap.xlsx  expected V4  -> REJECTED
+    V4: waves not disjoint
+broken_B_tour_length_wrong.xlsx  expected V6  -> REJECTED
+    V6: tour_length 3691 but tour closes at 3684
+broken_B_rations_target_wrong.xlsx  expected V6  -> REJECTED
+    V6: planted rations do not sum to rations_target
+broken_B_target_is_hq.xlsx  expected V3  -> REJECTED
+    V3: targets must be 3 distinct shelters/hospitals other than HQ
+broken_B_capacity_out_of_range.xlsx  expected V2  -> REJECTED
+    V2: capacity outside 10%..70% of crate weight
+broken_B_all_priorities_one.xlsx  expected V2  -> REJECTED
+    V2: need >=6 distinct priorities including 1
+    V7: S2 mean alarm priority under 6.0
+broken_B_tick_decreases.xlsx  expected V3  -> REJECTED
+    V3: ticks must start at 0 and never decrease
+    V2: alarms per tick 580.000
+broken_B_graph_too_dense_for_study.xlsx  expected V7  -> REJECTED
+    V2: E=9730 outside V-1..3V
+    V7: S2 avg degree 139.00
+broken_B_log_symbol_lowercase.xlsx  expected V5  -> REJECTED
+    V5: log symbol outside the 38-symbol alphabet
+broken_B_rule_repeats_switch.xlsx  expected V3  -> REJECTED
+    V3: rule needs 3 non-zero literals on 3 different switches
+broken_B_formula_cell.xlsx  expected V1  -> REJECTED
+    V1: data could not be processed (TypeError: '<=' not supported between instances of 'int' and 'str')
+    V1: formula in windows
+broken_B_pipeline_dim_out_of_range.xlsx  expected V2  -> REJECTED
+    V2: dimension range
+broken_B_drum_proportional.xlsx  expected V2  -> REJECTED
+    V2: drum price range
+    V2: drum prices all proportional to length
+valid_A_case9.xlsx  (unbroken original) -> RESULT: PASS
+valid_B_case25.xlsx  (unbroken original) -> RESULT: PASS
+
+ALL BROKEN COPIES REJECTED
