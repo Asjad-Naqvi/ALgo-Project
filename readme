@@ -1,1 +1,183 @@
-Hello
+# LIFELINE: Algorithmic Relief-Command Engine
+
+An algorithm design and analysis project for modelling relief operations after
+natural disasters. **LIFELINE** generates reproducible, synthetic relief
+scenarios and validates the resulting Excel workbooks against structural,
+semantic, and cross-case constraints.
+
+The project is designed to support the complete workflow:
+
+1. Generate a deterministic master dataset from a group seed.
+2. Verify the dataset with an independent validator.
+3. Study the computational problems represented by each scenario.
+4. Select, implement, and compare algorithms using evidence from the data.
+5. Keep the results reproducible through source code, tests, and validation
+   reports.
+
+## Project snapshot
+
+- **Dataset:** 50 generated cases in `cases.xlsx`
+- **Case studies:** six relief-planning scenarios
+- **Data format:** one Excel workbook containing 20 related sheets
+- **Case tiers:** small (`S`), medium (`M`), large (`L`), and adversarial (`X`)
+- **Randomness:** fully determined by the group seed and case number
+- **Validation:** structural checks, per-case claims, scenario signatures,
+  variety rules, and adversarial trap cases
+- **Language:** Python 3
+- **Workbook library:** `openpyxl`
+
+## Relief problem modules
+
+The generated cases combine the following algorithmic problems:
+
+| Module | Problem | Planned algorithmic focus |
+| --- | --- | --- |
+| A. Relief inventory | Select crates under a capacity limit | 0/1 knapsack dynamic programming, with greedy and exhaustive baselines |
+| B. Route planning | Find affordable and reachable routes through closures | Dijkstra with a binary heap, BFS, and Bellman–Ford comparison |
+| C. Rescue scheduling | Select compatible rescue windows | Earliest-finish greedy scheduling and weighted interval dynamic programming |
+| D. Emergency queue | Release the most urgent alarm at each tick | Priority queue ordered by priority and alarm ID |
+| E. Radio logs | Search, compare, and encode radio data | KMP, edit-distance dynamic programming, and Huffman coding |
+| F. Network planning | Connect reachable locations at minimum cable cost | Kruskal’s minimum spanning tree with union-find |
+| G. Chains and cuts | Optimize matrix multiplication and drum cuts | Bottom-up dynamic programming |
+| H. Hard planning questions | Solve SAT, subset-sum, tour, and cover decisions | DPLL, subset-sum DP, Held–Karp/heuristics, and bounded search |
+| I. Nearest sites and checksums | Find closest sites and multiply large checksums | Divide-and-conquer closest pair and Karatsuba multiplication |
+
+The algorithm choices are based on the generated data characteristics, such
+as integer capacities, sparse graphs, non-negative route costs, bounded
+priority values, and the size of each case tier. See
+[`proposal.pdf`](./proposal.pdf) and [`approach_note.pdf`](./approach_note.pdf)
+for the project’s algorithm-selection rationale.
+
+## Repository layout
+
+```text
+.
+├── cases.xlsx                 # Generated master workbook
+├── generator/
+│   └── generator.py           # Deterministic workbook generator
+├── validator/
+│   ├── validate.py            # Independent workbook validator
+│   └── tests/                 # Valid and intentionally broken workbooks
+├── validate.py                # Convenient validator entry point
+├── validation_report.txt      # Recorded validation results
+├── members.txt                # Team information
+├── proposal.pdf               # Algorithm-selection proposal
+├── approach_note.pdf          # Data and design rationale
+└── repository.txt             # Project repository reference
+```
+
+## Requirements
+
+- Python 3.8 or newer (`python3` on Linux/macOS)
+- `openpyxl`
+
+Install the only external Python dependency with:
+
+```bash
+python3 -m pip install openpyxl
+```
+
+## Quick start
+
+Run all commands from the project directory.
+
+### Generate a complete workbook
+
+The project seed is `1`, matching the group number recorded in the project
+materials:
+
+```bash
+python3 generator/generator.py --seed 1 --out cases.xlsx
+```
+
+This creates all 50 cases (`00` through `49`) and writes the workbook’s 20
+sheets in the required order.
+
+To generate selected cases for focused development or testing:
+
+```bash
+python3 generator/generator.py --seed 1 --out sample.xlsx --only 0 1 25
+```
+
+### Validate a workbook
+
+Validate the complete dataset:
+
+```bash
+python3 validator/validate.py cases.xlsx
+```
+
+The validator prints the result for every case, followed by global validation
+and an overall `RESULT: PASS` or `RESULT: FAIL`. It exits with status `0` on
+success and a non-zero status when any rule fails.
+
+For a reduced workbook used during development, skip the full 50-case and
+cross-case checks:
+
+```bash
+python3 validator/validate.py sample.xlsx --partial
+```
+
+The root-level `validate.py` provides the same validator entry point.
+
+### Run the validator test corpus
+
+The `validator/tests/` directory contains valid examples and workbooks with
+deliberate faults, including malformed headers, duplicate serials,
+disconnected networks, invalid formulas, incorrect claims, and violations of
+scenario-specific rules. Each broken workbook should be rejected:
+
+```bash
+for workbook in validator/tests/*.xlsx; do
+    python3 validator/validate.py "$workbook" --partial
+done
+```
+
+The expected aggregate results are recorded in
+[`validation_report.txt`](./validation_report.txt).
+
+## Validation guarantees
+
+The validator recomputes values from raw workbook cells instead of trusting
+claimed results. It checks, among other requirements:
+
+- exact sheet names, ordering, headers, data types, and row ordering;
+- valid case IDs, tiers, scenarios, and group seed;
+- connected base networks and valid closure waves;
+- distinct serials and valid crate, route, alarm, and sensor data;
+- pattern counts, optimization claims, planted assignments, tours, and covers;
+- scenario signatures and required variety across the dataset;
+- all four adversarial trap cases (`46`–`49`);
+- rejection of malformed and intentionally corrupted workbook copies.
+
+## Reproducibility
+
+Generation is deterministic: the same seed and case selection produce the same
+workbook contents. A reproducible run can therefore be performed with:
+
+```bash
+python3 generator/generator.py --seed 1 --out cases.xlsx
+python3 validator/validate.py cases.xlsx
+```
+
+The generated workbook must remain synthetic and must be produced by the
+project’s generator rather than manually edited.
+
+## Contributors
+
+| Contributor | Roll number | Section |
+| --- | --- | --- |
+| Ali Asjad | 23I-2648 | B |
+| Sameer Khan | 23I-2521 | B |
+| Saad bin Saed | 23I-6050 | B |
+
+**Group number:** 1
+
+## Academic and implementation notes
+
+This is an academic project for Design and Analysis of Algorithms at the
+National University of Computer and Emerging Sciences. Core algorithms should
+be implemented and analysed by the project team; standard libraries may be
+used for data handling and verification, but should not silently replace the
+algorithm under evaluation. Experimental claims, plots, and conclusions should
+be reproducible from the committed source and dataset.
