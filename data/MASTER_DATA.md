@@ -24,3 +24,14 @@ Repeat the checksum check for each file covered by a per-file manifest. The load
 - The loader raises `DatasetError` for unreadable or structurally invalid CSVs. Modules validate their own domain constraints and raise `ValueError` on invalid inputs. A valid but unreachable route or absent solution uses `None` for the unavailable result. Valid empty selections and queues return empty collections. The CLI should show these outcomes explicitly.
 
 These interfaces are ready for Sameer's campaign adapter and Saad's benchmark runner. Confirm them as the module signatures are added.
+
+## Truck loading
+
+```python
+from src.inventory import optimal_load
+
+load = optimal_load(case.tables["crates"], case.metadata["capacity"])
+print(load.crate_ids, load.total_weight, load.total_value)
+```
+
+Use the same inputs with `greedy_load` for an exact-ratio greedy baseline or `exhaustive_load` for a small-case exact comparison. For the campaign, pass crate rows with that day's adjusted values.
