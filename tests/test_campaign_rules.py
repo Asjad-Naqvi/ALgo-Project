@@ -105,5 +105,38 @@ class TestCampaignRules(unittest.TestCase):
 
     def test_no_extra_alarm(self):
         self.assertEqual(add_emergency_alarm(3, []), [])
+
+    def test_emergency_alarm_dispatch_integration(self):
+        from src.campaign_rules import add_emergency_alarm
+        from src.emergency_queue import dispatch_alarms
+
+        original = [
+            {"alarm_id": 1, "tick": 0, "priority": 3},
+            {"alarm_id": 2, "tick": 2, "priority": 8}
+        ]
+
+        for day, expected_priority in [(2, 9), (5, 10)]:
+            with self.subTest(day=day):
+                updated = add_emergency_alarm(day, original)
+
+                self.assertEqual(
+                    [alarm["tick"] for alarm in updated],
+                    [0, 0, 2]
+                )
+
+                result = dispatch_alarms(updated, "heap")
+
+                self.assertEqual(len(result), 3)
+                self.assertEqual(
+                    result[0]["priority"],
+                    expected_priority
+                )
+                self.assertEqual(
+                    result[0]["release_tick"],
+                    0
+                )
+
+                self.assertEqual(len(original), 2)
+
 if __name__ == "__main__":
     unittest.main()

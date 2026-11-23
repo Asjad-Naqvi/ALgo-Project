@@ -80,20 +80,23 @@ def add_emergency_alarm(day, incidents):
     if not 1 <= day <= 7:
         raise ValueError("Invalid campaign day")
 
-    updated = [alarm.copy() for alarm in incidents]
+    updated = [dict(alarm) for alarm in incidents]
 
-    if day not in (2, 5):
-        return updated
+    if day in (2, 5):
+        new_id = max(
+            (alarm["alarm_id"] for alarm in updated),
+            default=0
+        ) + 1
 
-    new_id = max(
-        (alarm["alarm_id"] for alarm in incidents),
-        default=0
-    ) + 1
+        updated.append({
+            "alarm_id": new_id,
+            "tick": 0,
+            "priority": 9 if day == 2 else 10
+        })
 
-    updated.append({
-        "alarm_id": new_id,
-        "tick": 0,
-        "priority": 9 if day == 2 else 10
-    })
+    # Dispatch requires incidents in arrival order.
+    updated.sort(
+        key=lambda alarm: (alarm["tick"], alarm["alarm_id"])
+    )
 
     return updated
