@@ -5,7 +5,8 @@ from src.radio_logs import (
     naive_search,
     compute_lps,
     kmp_search,
-    edit_distance_with_script
+    edit_distance_with_script,
+    hirschberg_edit_script
 )
 
 class TestRadioLogs(unittest.TestCase):
@@ -179,6 +180,105 @@ class TestRadioLogs(unittest.TestCase):
                 self.assertEqual(distance, expected)
                 self.assertEqual(len(operations), distance)
                 self.assertEqual("".join(characters), target)
+
+
+    def test_hirschberg_known_example(self):
+        distance, operations = hirschberg_edit_script(
+            "KITTEN", "SITTING"
+        )
+
+        self.assertEqual(distance, 3)
+        self.assertEqual(len(operations), 3)
+
+        self.assertEqual(
+            apply_edit_script("KITTEN", operations),
+            "SITTING"
+        )
+
+    def test_hirschberg_empty_inputs(self):
+        cases = [
+            ("", "", 0),
+            ("", "ABC", 3),
+            ("ABC", "", 3),
+        ]
+
+        for source, target, expected in cases:
+            with self.subTest(source=source, target=target):
+                distance, operations = hirschberg_edit_script(
+                    source, target
+                )
+
+                self.assertEqual(distance, expected)
+                self.assertEqual(
+                    apply_edit_script(source, operations),
+                    target
+                )
+
+        with self.assertRaises(TypeError):
+            hirschberg_edit_script(123, "ABC")
+
+    def test_hirschberg_reconstruction(self):
+        cases = [
+            ("ABC", "AXC"),
+            ("ABC", "AC"),
+            ("AC", "ABC"),
+            ("ABAB", "BABA"),
+            ("AAAAAA", "BAAABA"),
+        ]
+
+        for source, target in cases:
+            distance, operations = hirschberg_edit_script(
+                source, target
+            )
+
+            with self.subTest(source=source, target=target):
+                self.assertEqual(
+                    apply_edit_script(source, operations),
+                    target
+                )
+                self.assertEqual(len(operations), distance)
+
+    def test_hirschberg_randomized(self):
+        rng = random.Random(2521)
+        alphabet = "ABC012"
+
+        for case_no in range(100):
+            source = "".join(
+                rng.choices(alphabet, k=rng.randint(0, 30))
+            )
+            target = "".join(
+                rng.choices(alphabet, k=rng.randint(0, 30))
+            )
+
+            full_distance, _ = edit_distance_with_script(
+                source, target
+            )
+
+            distance, operations = hirschberg_edit_script(
+                source, target
+            )
+
+            with self.subTest(case=case_no):
+                self.assertEqual(distance, full_distance)
+                self.assertEqual(len(operations), distance)
+                self.assertEqual(
+                    apply_edit_script(source, operations),
+                    target
+                )
+
+    def test_hirschberg_asymmetric_input(self):
+        source = "A" * 3000
+        target = "B"
+
+        distance, operations = hirschberg_edit_script(
+            source, target
+        )
+
+        self.assertEqual(distance, 3000)
+        self.assertEqual(
+            apply_edit_script(source, operations),
+            target
+        )
 if __name__ == "__main__":
     unittest.main()
 
@@ -203,3 +303,21 @@ def reference_edit_distance(a, b):
             )
 
     return dp[n][m]
+
+
+def apply_edit_script(source, operations):
+    characters = list(source)
+
+    for op in operations:
+        index = op["index"]
+
+        if op["operation"] == "replace":
+            characters[index] = op["character"]
+
+        elif op["operation"] == "insert":
+            characters.insert(index, op["character"])
+
+        elif op["operation"] == "delete":
+            characters.pop(index)
+
+    return "".join(characters)
