@@ -1,0 +1,12 @@
+module,experiment,algorithm,instance,size,size2,time_s,time_iqr_s,ops,mem_bytes,status,note
+C,scheduling,greedy,synthetic_seed_2521_scheduling_16,16,,0.000018750,0.000000750,240,304,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,weighted,synthetic_seed_2521_scheduling_16,16,,0.000027125,0.000001250,326,432,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,exhaustive,synthetic_seed_2521_scheduling_16,16,,0.141355583,0.000412625,65536,408,OK,synthetic pilot; ops_unit=enumerated_subsets; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,heap,synthetic_seed_2521_alarms_64,64,,0.000129583,0.000001833,424,3176,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,scan,synthetic_seed_2521_alarms_64,64,,0.000125292,0.000001250,693,3176,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,naive,synthetic_seed_2521_matching_256,256,4,0.000049541,0.000000708,1012,0,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,kmp,synthetic_seed_2521_matching_256,256,4,0.000029917,0.000002374,516,40,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,full_dp,synthetic_seed_2521_edit_16,16,16,0.000041000,0.000001334,256,2632,OK,synthetic pilot; ops_unit=dp_cell_updates; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,hirschberg,synthetic_seed_2521_edit_16,16,16,0.000122834,0.000004458,,2952,OK,synthetic pilot; ops_unit=not_instrumented; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,huffman,synthetic_seed_2521_compression_256,256,,0.000171083,0.000003625,658,11147,OK,synthetic pilot; ops_unit=symbol_visits_plus_heap_push_pop; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,fixed6,synthetic_seed_2521_compression_256,256,,0.000028959,0.000002625,294,6275,OK,synthetic pilot; ops_unit=symbol_encodes_plus_codebook_entries; warmup=1; measured=5; mem=tracemalloc_peak

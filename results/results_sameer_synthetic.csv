@@ -1,0 +1,56 @@
+module,experiment,algorithm,instance,size,size2,time_s,time_iqr_s,ops,mem_bytes,status,note
+C,scheduling,greedy,synthetic_seed_2521_scheduling_16,16,,0.000018750,0.000000917,240,304,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,weighted,synthetic_seed_2521_scheduling_16,16,,0.000027125,0.000001708,326,432,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,exhaustive,synthetic_seed_2521_scheduling_16,16,,0.140430792,0.000219125,65536,408,OK,synthetic pilot; ops_unit=enumerated_subsets; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,greedy,synthetic_seed_2521_scheduling_32,32,,0.000042542,0.000001209,597,552,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,weighted,synthetic_seed_2521_scheduling_32,32,,0.000064584,0.000005125,790,912,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,exhaustive,synthetic_seed_2521_scheduling_32,32,,,,,,DNF,synthetic pilot; predefined exact cap n>18; no timeout claimed
+C,scheduling,greedy,synthetic_seed_2521_scheduling_64,64,,0.000097417,0.000000500,1443,1072,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,weighted,synthetic_seed_2521_scheduling_64,64,,0.000136875,0.000002916,1888,1680,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,exhaustive,synthetic_seed_2521_scheduling_64,64,,,,,,DNF,synthetic pilot; predefined exact cap n>18; no timeout claimed
+C,scheduling,greedy,synthetic_seed_2521_scheduling_128,128,,0.000225666,0.000001167,3335,2096,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,weighted,synthetic_seed_2521_scheduling_128,128,,0.000306708,0.000004666,4346,3280,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,exhaustive,synthetic_seed_2521_scheduling_128,128,,,,,,DNF,synthetic pilot; predefined exact cap n>18; no timeout claimed
+C,scheduling,greedy,synthetic_seed_2521_scheduling_256,256,,0.000503958,0.000000959,7752,4200,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,weighted,synthetic_seed_2521_scheduling_256,256,,0.000712041,0.000024001,10013,6768,OK,synthetic pilot; ops_unit=window_field_reads; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,exhaustive,synthetic_seed_2521_scheduling_256,256,,,,,,DNF,synthetic pilot; predefined exact cap n>18; no timeout claimed
+D,alarms,heap,synthetic_seed_2521_alarms_64,64,,0.000136750,0.000011292,424,3176,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,scan,synthetic_seed_2521_alarms_64,64,,0.000125459,0.000000792,693,3176,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,heap,synthetic_seed_2521_alarms_128,128,,0.000338167,0.000000417,1175,18536,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,scan,synthetic_seed_2521_alarms_128,128,,0.000434833,0.000000583,2752,18536,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,heap,synthetic_seed_2521_alarms_256,256,,0.000770833,0.000024375,2945,43208,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,scan,synthetic_seed_2521_alarms_256,256,,0.001569292,0.000004625,10965,43208,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,heap,synthetic_seed_2521_alarms_512,512,,0.001808416,0.000018501,7175,121960,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,scan,synthetic_seed_2521_alarms_512,512,,0.005852542,0.000011001,43776,121960,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,heap,synthetic_seed_2521_alarms_1024,1024,,0.004083000,0.000059875,16800,237192,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,scan,synthetic_seed_2521_alarms_1024,1024,,0.024352333,0.000037083,174933,237192,OK,synthetic pilot; ops_unit=priority_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,naive,synthetic_seed_2521_matching_256,256,4,0.000049750,0.000000834,1012,0,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,kmp,synthetic_seed_2521_matching_256,256,4,0.000028792,0.000004125,516,40,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,naive,synthetic_seed_2521_matching_512,512,8,0.000177792,0.000001917,4040,0,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,kmp,synthetic_seed_2521_matching_512,512,8,0.000058042,0.000000875,1036,72,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,naive,synthetic_seed_2521_matching_1024,1024,12,0.000517958,0.000003750,12156,0,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,kmp,synthetic_seed_2521_matching_1024,1024,12,0.000115708,0.000001166,2068,104,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,naive,synthetic_seed_2521_matching_2048,2048,20,0.001643041,0.000015333,40580,0,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,kmp,synthetic_seed_2521_matching_2048,2048,20,0.000232708,0.000001583,4132,168,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,naive,synthetic_seed_2521_matching_4096,4096,40,0.006215833,0.000012292,162280,0,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,kmp,synthetic_seed_2521_matching_4096,4096,40,0.000464916,0.000001208,8268,328,OK,synthetic pilot; ops_unit=character_comparisons; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,full_dp,synthetic_seed_2521_edit_16,16,16,0.000041000,0.000001125,256,2632,OK,synthetic pilot; ops_unit=dp_cell_updates; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,hirschberg,synthetic_seed_2521_edit_16,16,16,0.000125292,0.000007249,,2952,OK,synthetic pilot; ops_unit=not_instrumented; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,full_dp,synthetic_seed_2521_edit_32,32,32,0.000163791,0.000017749,1024,9224,OK,synthetic pilot; ops_unit=dp_cell_updates; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,hirschberg,synthetic_seed_2521_edit_32,32,32,0.000391375,0.000027500,,4208,OK,synthetic pilot; ops_unit=not_instrumented; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,full_dp,synthetic_seed_2521_edit_64,64,64,0.000558542,0.000006583,4096,34728,OK,synthetic pilot; ops_unit=dp_cell_updates; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,hirschberg,synthetic_seed_2521_edit_64,64,64,0.001351292,0.000024542,,7288,OK,synthetic pilot; ops_unit=not_instrumented; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,full_dp,synthetic_seed_2521_edit_128,128,128,0.002251834,0.000133833,16384,138088,OK,synthetic pilot; ops_unit=dp_cell_updates; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,hirschberg,synthetic_seed_2521_edit_128,128,128,0.004990833,0.000135583,,12264,OK,synthetic pilot; ops_unit=not_instrumented; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,full_dp,synthetic_seed_2521_edit_256,256,256,0.008526292,0.000046459,65536,559824,OK,synthetic pilot; ops_unit=dp_cell_updates; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,hirschberg,synthetic_seed_2521_edit_256,256,256,0.018264542,0.000192543,,41416,OK,synthetic pilot; ops_unit=not_instrumented; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,huffman,synthetic_seed_2521_compression_256,256,,0.000173000,0.000003125,658,11147,OK,synthetic pilot; ops_unit=symbol_visits_plus_heap_push_pop; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,fixed6,synthetic_seed_2521_compression_256,256,,0.000029917,0.000002041,294,6275,OK,synthetic pilot; ops_unit=symbol_encodes_plus_codebook_entries; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,huffman,synthetic_seed_2521_compression_512,512,,0.000200459,0.000002666,1170,11049,OK,synthetic pilot; ops_unit=symbol_visits_plus_heap_push_pop; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,fixed6,synthetic_seed_2521_compression_512,512,,0.000047750,0.000005083,550,9827,OK,synthetic pilot; ops_unit=symbol_encodes_plus_codebook_entries; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,huffman,synthetic_seed_2521_compression_1024,1024,,0.000270167,0.000015417,2198,14842,OK,synthetic pilot; ops_unit=symbol_visits_plus_heap_push_pop; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,fixed6,synthetic_seed_2521_compression_1024,1024,,0.000071292,0.000004417,1062,17539,OK,synthetic pilot; ops_unit=symbol_encodes_plus_codebook_entries; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,huffman,synthetic_seed_2521_compression_2048,2048,,0.000391541,0.000003833,4246,27109,OK,synthetic pilot; ops_unit=symbol_visits_plus_heap_push_pop; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,fixed6,synthetic_seed_2521_compression_2048,2048,,0.000128750,0.000013584,2086,33059,OK,synthetic pilot; ops_unit=symbol_encodes_plus_codebook_entries; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,huffman,synthetic_seed_2521_compression_4096,4096,,0.000655458,0.000015000,8342,48292,OK,synthetic pilot; ops_unit=symbol_visits_plus_heap_push_pop; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,fixed6,synthetic_seed_2521_compression_4096,4096,,0.000248542,0.000008583,4134,60163,OK,synthetic pilot; ops_unit=symbol_encodes_plus_codebook_entries; warmup=1; measured=5; mem=tracemalloc_peak
