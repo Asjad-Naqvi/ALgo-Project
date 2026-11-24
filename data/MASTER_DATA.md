@@ -24,3 +24,27 @@ Repeat the checksum check for each file covered by a per-file manifest. The load
 - The loader raises `DatasetError` for unreadable or structurally invalid CSVs. Modules validate their own domain constraints and raise `ValueError` on invalid inputs. A valid but unreachable route or absent solution uses `None` for the unavailable result. Valid empty selections and queues return empty collections. The CLI should show these outcomes explicitly.
 
 These interfaces are ready for Sameer's campaign adapter and Saad's benchmark runner. Confirm them as the module signatures are added.
+
+## Truck loading
+
+```python
+from src.inventory import optimal_load
+
+load = optimal_load(case.tables["crates"], case.metadata["capacity"])
+print(load.crate_ids, load.total_weight, load.total_value)
+```
+
+Use the same inputs with `greedy_load` for an exact-ratio greedy baseline or `exhaustive_load` for a small-case exact comparison. For the campaign, pass crate rows with that day's adjusted values.
+
+## Route planning
+
+```python
+from src.routing import plan_routes
+
+routes = plan_routes(
+    case.tables["locations"], case.tables["roads"],
+    source=0, target=case.metadata["target_0"], blocked_road_ids=(),
+)
+```
+
+Pass the full road table, with any daily travel-time changes, the day's location penalties, and the day's blocked road IDs. Set `baseline=True` to use Bellman–Ford for the cheapest route. The fewest-roads path uses ascending-neighbour BFS in either mode. Path ties for cheapest cost use the lowest-ID optimal predecessor at each step. When the destination is unreachable, both paths and the cost are `None` and the reachable set is still returned.
