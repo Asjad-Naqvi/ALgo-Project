@@ -1,3 +1,6 @@
+from src.inventory import optimal_load, greedy_load
+from src.routing import plan_routes
+
 from src.campaign_rules import (
     get_blocked_waves,
     get_destination_index,
@@ -148,3 +151,100 @@ def evaluate_local_day(day_inputs, queue_algorithm="heap"):
         ],
         "alarm_dispatch": alarm_dispatch,
     }
+
+def run_campaign(case, mode="primary"):
+    """
+    Execute all seven campaign days.
+
+    Primary: Dijkstra, optimal knapsack, heap queue.
+    Baseline: Bellman-Ford, greedy load, scan queue.
+    """
+
+    if mode not in ("primary", "baseline"):
+        raise ValueError("Invalid campaign mode")
+
+    baseline = mode == "baseline"
+    current_location = 0
+    results = []
+
+    for day in range(1, 8):
+        inputs = prepare_day(
+            case, day, origin=current_location
+        )
+
+        # Calculate route using the day's road conditions.
+        route = plan_routes(
+            inputs["locations"],
+            inputs["roads"],
+            current_location,
+            inputs["target"],
+            inputs["closed_road_nos"],
+            baseline=baseline,
+        )
+
+        reachable = route.cheapest_path is not None
+
+        # Default: no crates loaded.
+        selected_crates = []
+        load_weight = 0
+        load_value = 0
+
+        # Loading requires a reachable destination.
+        # Day 7 never permits loading.
+        if reachable and inputs["loading_allowed"]:
+            load_algorithm = (
+                greedy_load if baseline else optimal_load
+            )
+
+            load = load_algorithm(
+                inputs["crates"],
+                inputs["capacity"],
+            )
+
+            selected_crates = list(load.crate_ids)
+            load_weight = load.total_weight
+            load_value = load.total_value
+
+        # Run rescue scheduling and emergency dispatch.
+        local_result = evaluate_local_day(
+            inputs,
+            queue_algorithm="scan" if baseline else "heap",
+        )
+
+        # Move only if the destination is reachable.
+        if reachable:
+            current_location = inputs["target"]
+
+        results.append({
+            "case_id": case.case_id,
+            "day": day,
+            "mode": mode,
+            "origin": inputs["origin"],
+            "target": inputs["target"],
+            "end_location": current_location,
+            "status": (
+                "completed" if reachable else "unreachable"
+            ),
+            "closed_road_nos": inputs["closed_road_nos"],
+            "cheapest_path": (
+                list(route.cheapest_path)
+                if reachable else None
+            ),
+            "route_cost": route.cheapest_cost,
+            "fewest_roads_path": (
+                list(route.fewest_roads_path)
+                if route.fewest_roads_path is not None
+                else None
+            ),
+            "loading_allowed": inputs["loading_allowed"],
+            "selected_crates": selected_crates,
+            "load_weight": load_weight,
+            "load_value": load_value,
+            "window_count": local_result["window_count"],
+            "window_value": local_result["window_value"],
+            "count_window_ids": local_result["count_window_ids"],
+            "value_window_ids": local_result["value_window_ids"],
+            "alarm_dispatch": local_result["alarm_dispatch"],
+        })
+
+    return results

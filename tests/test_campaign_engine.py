@@ -4,6 +4,7 @@ from src.master_data import CaseData
 from src.campaign_engine import (
     prepare_day,
     evaluate_local_day,
+    run_campaign
 )
 
 
@@ -175,3 +176,116 @@ class TestCampaignEngine(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class TestFullCampaign(unittest.TestCase):
+
+    def setUp(self):
+        self.case = CaseData(
+            case_id="1-00",
+            metadata={
+                "target_0": 1,
+                "target_1": 2,
+                "target_2": 0,
+                "capacity": 50,
+            },
+            tables={
+                "locations": [
+                    {"loc_id": 0, "penalty": 0},
+                    {"loc_id": 1, "penalty": 0},
+                    {"loc_id": 2, "penalty": 0},
+                ],
+                "roads": [
+                    {
+                        "road_no": 0,
+                        "u": 0, "v": 1, "minutes": 2
+                    },
+                    {
+                        "road_no": 1,
+                        "u": 1, "v": 2, "minutes": 2
+                    },
+                    {
+                        "road_no": 2,
+                        "u": 0, "v": 2, "minutes": 8
+                    },
+                ],
+                "waves": [
+                    {"wave_no": 1, "road_no": 1},
+                    {"wave_no": 2, "road_no": 2},
+                ],
+                "crates": [
+                    {
+                        "crate_id": 1, "cat": 0,
+                        "weight": 10, "value": 60
+                    },
+                    {
+                        "crate_id": 2, "cat": 0,
+                        "weight": 20, "value": 100
+                    },
+                    {
+                        "crate_id": 3, "cat": 0,
+                        "weight": 30, "value": 120
+                    },
+                ],
+                "windows": [],
+                "incidents": [],
+            },
+        )
+
+    def test_primary_vs_baseline(self):
+        primary = run_campaign(self.case, "primary")
+        baseline = run_campaign(self.case, "baseline")
+
+        self.assertEqual(len(primary), 7)
+        self.assertEqual(len(baseline), 7)
+
+        # Classic knapsack counterexample.
+        self.assertEqual(primary[0]["load_value"], 220)
+        self.assertEqual(baseline[0]["load_value"], 160)
+
+        # Both routing algorithms find optimal costs.
+        for p, b in zip(primary, baseline):
+            self.assertEqual(p["route_cost"], b["route_cost"])
+            self.assertEqual(p["status"], b["status"])
+
+    def test_unreachable_keeps_location(self):
+        results = run_campaign(self.case)
+
+        # Day 5 finishes at location 2.
+        self.assertEqual(results[4]["end_location"], 2)
+
+        # All closure waves activate on Day 6.
+        # Location 2 becomes disconnected.
+        self.assertEqual(results[5]["status"], "unreachable")
+        self.assertEqual(results[5]["origin"], 2)
+        self.assertEqual(results[5]["end_location"], 2)
+        self.assertEqual(results[5]["selected_crates"], [])
+
+        # Day 7 starts where Day 6 ended.
+        self.assertEqual(results[6]["origin"], 2)
+        self.assertEqual(results[6]["status"], "unreachable")
+
+    def test_day7_no_loading_on_reachable_route(self):
+        case = CaseData(
+            case_id=self.case.case_id,
+            metadata={
+                "target_0": 0,
+                "target_1": 1,
+                "target_2": 1,
+                "capacity": 50,
+            },
+            tables=self.case.tables,
+        )
+
+        results = run_campaign(case)
+
+        day7 = results[6]
+
+        self.assertEqual(day7["status"], "completed")
+        self.assertEqual(day7["cheapest_path"], [1, 0])
+        self.assertFalse(day7["loading_allowed"])
+        self.assertEqual(day7["selected_crates"], [])
+        self.assertEqual(day7["load_value"], 0)
+
+    def test_invalid_campaign_mode(self):
+        with self.assertRaises(ValueError):
+            run_campaign(self.case, "unknown")
