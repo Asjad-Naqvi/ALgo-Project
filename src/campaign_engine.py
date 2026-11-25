@@ -1,5 +1,6 @@
 from src.inventory import optimal_load, greedy_load
 from src.routing import plan_routes
+from src.cable import plan_cable
 
 from src.campaign_rules import (
     get_blocked_waves,
@@ -156,33 +157,34 @@ def run_campaign(case, mode="primary"):
     """
     Execute all seven campaign days.
 
-    Primary: Dijkstra, optimal knapsack, heap queue.
-    Baseline: Bellman-Ford, greedy load, scan queue.
+    Primary: Dijkstra, optimal knapsack, heap queue, Kruskal.
+    Baseline: Bellman-Ford, greedy load, scan queue, Prim.
     """
 
     if mode not in ("primary", "baseline"):
         raise ValueError("Invalid campaign mode")
 
     baseline = mode == "baseline"
-    current_location = 0
     results = []
 
     for day in range(1, 8):
-        inputs = prepare_day(
-            case, day, origin=current_location
-        )
+        inputs = prepare_day(case, day)
 
         # Calculate route using the day's road conditions.
         route = plan_routes(
             inputs["locations"],
             inputs["roads"],
-            current_location,
+            inputs["origin"],
             inputs["target"],
             inputs["closed_road_nos"],
             baseline=baseline,
         )
 
         reachable = route.cheapest_path is not None
+        cable = plan_cable(
+            inputs["open_roads"], route.reachable_ids,
+            source=inputs["origin"], baseline=baseline,
+        )
 
         # Default: no crates loaded.
         selected_crates = []
@@ -211,17 +213,13 @@ def run_campaign(case, mode="primary"):
             queue_algorithm="scan" if baseline else "heap",
         )
 
-        # Move only if the destination is reachable.
-        if reachable:
-            current_location = inputs["target"]
-
         results.append({
             "case_id": case.case_id,
             "day": day,
             "mode": mode,
             "origin": inputs["origin"],
             "target": inputs["target"],
-            "end_location": current_location,
+            "end_location": inputs["target"] if reachable else inputs["origin"],
             "status": (
                 "completed" if reachable else "unreachable"
             ),
@@ -231,6 +229,9 @@ def run_campaign(case, mode="primary"):
                 if reachable else None
             ),
             "route_cost": route.cheapest_cost,
+            "reachable_ids": sorted(route.reachable_ids),
+            "cable_road_ids": list(cable.road_ids),
+            "cable_cost": cable.total_cost,
             "fewest_roads_path": (
                 list(route.fewest_roads_path)
                 if route.fewest_roads_path is not None

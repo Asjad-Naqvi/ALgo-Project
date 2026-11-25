@@ -48,3 +48,13 @@ routes = plan_routes(
 ```
 
 Pass the full road table, with any daily travel-time changes, the day's location penalties, and the day's blocked road IDs. Set `baseline=True` to use Bellman–Ford for the cheapest route. The fewest-roads path uses ascending-neighbour BFS in either mode. Path ties for cheapest cost use the lowest-ID optimal predecessor at each step. When the destination is unreachable, both paths and the cost are `None` and the reachable set is still returned.
+
+## Run the campaign
+
+From the repository root, pass the verified release's CSV directory and a case ID.
+
+```text
+python -m src path/to/master_csv CASE_ID --mode both
+```
+
+The command prints seven daily results for each requested mode as JSON. Each day starts at HQ. Cable planning takes the open roads and the route planner's reachable set, then returns selected road IDs and total cable cost. Primary mode uses Kruskal and baseline mode uses Prim.

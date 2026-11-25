@@ -185,7 +185,7 @@ class TestFullCampaign(unittest.TestCase):
             metadata={
                 "target_0": 1,
                 "target_1": 2,
-                "target_2": 0,
+                "target_2": 2,
                 "capacity": 50,
             },
             tables={
@@ -197,15 +197,15 @@ class TestFullCampaign(unittest.TestCase):
                 "roads": [
                     {
                         "road_no": 0,
-                        "u": 0, "v": 1, "minutes": 2
+                        "u": 0, "v": 1, "minutes": 2, "cable": 2
                     },
                     {
                         "road_no": 1,
-                        "u": 1, "v": 2, "minutes": 2
+                        "u": 1, "v": 2, "minutes": 2, "cable": 3
                     },
                     {
                         "road_no": 2,
-                        "u": 0, "v": 2, "minutes": 8
+                        "u": 0, "v": 2, "minutes": 8, "cable": 8
                     },
                 ],
                 "waves": [
@@ -246,8 +246,11 @@ class TestFullCampaign(unittest.TestCase):
         for p, b in zip(primary, baseline):
             self.assertEqual(p["route_cost"], b["route_cost"])
             self.assertEqual(p["status"], b["status"])
+            self.assertEqual(p["cable_cost"], b["cable_cost"])
+        self.assertEqual(primary[0]["cable_road_ids"], [0, 1])
+        self.assertEqual(primary[0]["cable_cost"], 5)
 
-    def test_unreachable_keeps_location(self):
+    def test_each_day_starts_at_hq(self):
         results = run_campaign(self.case)
 
         # Day 5 finishes at location 2.
@@ -256,13 +259,14 @@ class TestFullCampaign(unittest.TestCase):
         # All closure waves activate on Day 6.
         # Location 2 becomes disconnected.
         self.assertEqual(results[5]["status"], "unreachable")
-        self.assertEqual(results[5]["origin"], 2)
-        self.assertEqual(results[5]["end_location"], 2)
+        self.assertEqual(results[5]["origin"], 0)
+        self.assertEqual(results[5]["end_location"], 0)
+        self.assertEqual(results[5]["cable_road_ids"], [0])
+        self.assertEqual(results[5]["reachable_ids"], [0, 1])
         self.assertEqual(results[5]["selected_crates"], [])
 
-        # Day 7 starts where Day 6 ended.
-        self.assertEqual(results[6]["origin"], 2)
-        self.assertEqual(results[6]["status"], "unreachable")
+        self.assertTrue(all(day["origin"] == 0 for day in results))
+        self.assertEqual(results[6]["cheapest_path"], [0, 1])
 
     def test_day7_no_loading_on_reachable_route(self):
         case = CaseData(
@@ -281,7 +285,7 @@ class TestFullCampaign(unittest.TestCase):
         day7 = results[6]
 
         self.assertEqual(day7["status"], "completed")
-        self.assertEqual(day7["cheapest_path"], [1, 0])
+        self.assertEqual(day7["cheapest_path"], [0])
         self.assertFalse(day7["loading_allowed"])
         self.assertEqual(day7["selected_crates"], [])
         self.assertEqual(day7["load_value"], 0)
