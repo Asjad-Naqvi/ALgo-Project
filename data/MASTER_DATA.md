@@ -1,6 +1,6 @@
 # Master dataset and module handoff
 
-Group seed is **1**. Official release version, filename and SHA-256 are pending receipt of the course release. Record them here after verifying the exact file or files named by the course checksum. Use the verified archive's extracted CSVs, if the course publishes an archive. The local Iteration 1 workbook can supply development fixtures.
+Group seed is **1**. Cite the course dataset as **master_release_v1** (2026-11-12). It contains 3,622 accepted cases from 75 groups. All 20 CSVs in both the ZIP and the extracted directory matched their published SHA-256 values in `CHECKSUMS.txt`. The local `archive.zip` itself has SHA-256 `5d514fd980f7c573c8d692b22196b209d8b4d3c685b59fe4f451ccd69aa85078`.
 
 From the repository root, use the loader with Python.
 
@@ -9,11 +9,11 @@ from pathlib import Path
 from src.master_data import load_master, verify_sha256
 
 verify_sha256(Path(course_file), course_sha256)
-cases = load_master(Path(csv_directory))
+cases = load_master(Path(csv_directory), case_ids=(case_id,))
 case = cases[case_id]
 ```
 
-Repeat the checksum check for each file covered by a per-file manifest. The loader reads one CSV per workbook sheet, with the existing headers and UTF-8 encoding. It preserves the order in `cases.csv` for sampling and keeps sheet rows in input order. With seed 1, take zero-based positions 1, 8, 15 and so on after filtering to the required tier.
+Repeat the checksum check for each file in `CHECKSUMS.txt`. The loader scans one UTF-8 CSV per workbook sheet and retains rows for the requested cases. Release v1 appends `group_no` and `orig_case_id` to each header. Both are strings, and the canonical case ID uses `group_no`, which can contain letters. The loader preserves master order and keeps sheet rows in input order. With seed 1, take zero-based positions 1, 8, 15 and so on after filtering to the required tier.
 
 ## Shared inputs and outcomes
 

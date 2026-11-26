@@ -7,7 +7,7 @@ semantic, and cross-case constraints.
 
 The project is designed to support the complete workflow:
 
-1. Generate a deterministic master dataset from a group seed.
+1. Generate the group's deterministic Iteration 1 workbook from a group seed.
 2. Verify the dataset with an independent validator.
 3. Study the computational problems represented by each scenario.
 4. Select, implement, and compare algorithms using evidence from the data.
@@ -52,7 +52,7 @@ for the project’s algorithm-selection rationale.
 
 ```text
 .
-├── cases.xlsx                 # Generated master workbook
+├── cases.xlsx                 # Generated Iteration 1 workbook
 ├── generator/
 │   └── generator.py           # Deterministic workbook generator
 ├── validator/
@@ -78,6 +78,29 @@ python3 -m pip install openpyxl
 ```
 
 ## Quick start
+
+### Run the Iteration 2 campaign
+
+Use Python 3.8 or newer from the repository root. Extract the course release `master_release_v1` into `archive/` with `cases.csv` directly inside it. The campaign uses Python's standard library. Install `openpyxl` for the workbook generator, validator and workbook-backed tests.
+
+```bash
+python -m src archive 1-00 --mode both
+python -m unittest discover -s tests
+```
+
+The CLI prints one JSON entry per day for each requested mode. The [master data guide](data/MASTER_DATA.md) records the release checksum, dataset format and module interfaces. A day starts from HQ, applies that day's changes, and sends the open-road reachability set to cable planning. Truck loading runs when the target is reachable and loading is allowed. The campaign also schedules rescue windows and dispatches alarms.
+
+### Inventory, routing and cable recommendations
+
+These recommendations use the [seed-1 development pilot](results/results_ali_development.csv), with five sizes per module. Release v1 verified the campaign integration. The timing results below come from synthetic inputs.
+
+| Module | Recommended algorithm | Evidence and when to reconsider |
+| --- | --- | --- |
+| **A · Inventory** | Exact capacity-indexed knapsack while its time and memory fit the dispatch budget. | At 256 crates and capacity 512, exact took 18.53 ms and peaked at roughly 195 KB of traced allocation. Greedy took 1.05 ms, but selected value 115 versus 200 on development trap 47. Watch crate count × capacity, peak allocation and dispatch latency. For oversized loads, evaluate a faster fallback and track its value gap on cases where the exact answer is available. |
+| **B · Routing** | Dijkstra for minimum cost and BFS for fewest roads and reachability. | At 512 locations, Dijkstra took 3.37 ms versus 4.63 ms for Bellman–Ford. Bellman–Ford was faster at 128 and 256 locations in the pilot, so the measured crossover depends on road order, graph shape and how quickly relaxations converge. Reject negative travel costs and monitor relaxation passes and latency on operational graphs. |
+| **F · Cable planning** | Kruskal on the open roads in the HQ component. | At 512 locations, Kruskal took 3.44 ms and peaked at roughly 130 KB, versus 4.09 ms and 202 KB for Prim. Prim was faster at 64 and 128 locations. Watch open-edge density, sorting time and heap growth before changing the default. Verify equal total cost on the same component. |
+
+The largest pilot risks, in order, are stale closures that send a truck onto an unavailable road, resource exhaustion that delays a load decision, and incorrect costs or IDs that produce plausible but invalid output. Protect against these by checking selected roads against the current closure set, measuring memory and runtime, and checking selected totals against the input rows.
 
 Run all commands from the project directory.
 

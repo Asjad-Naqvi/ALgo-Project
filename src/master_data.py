@@ -43,19 +43,24 @@ def verify_sha256(path: Path, expected: str) -> str:
     return expected
 
 
-def _read_table(path: Path, columns):
+def _read_table(path: Path, columns, selected=None, known_ids=None):
     try:
         with path.open(encoding="utf-8-sig", newline="") as stream:
             reader = csv.reader(stream, strict=True)
-            if next(reader, None) != columns:
+            header = next(reader, None)
+            if header not in (columns, columns + ["group_no", "orig_case_id"]):
                 raise DatasetError(f"{path}: unexpected header")
             for values in reader:
                 location = f"{path}:{reader.line_num}"
-                if len(values) != len(columns):
-                    raise DatasetError(f"{location}: expected {len(columns)} columns")
+                if len(values) != len(header):
+                    raise DatasetError(f"{location}: expected {len(header)} columns")
+                if known_ids is not None and values[0] not in known_ids:
+                    raise DatasetError(f"{location}: unknown case_id {values[0]}")
+                if selected is not None and values[0] not in selected:
+                    continue
                 row = {}
-                for column, value in zip(columns, values):
-                    if column in TEXT:
+                for column, value in zip(header, values):
+                    if column in TEXT or column in ("group_no", "orig_case_id"):
                         row[column] = value
                     elif re.fullmatch(r"-?[0-9]+", value):
                         row[column] = int(value)
@@ -66,33 +71,35 @@ def _read_table(path: Path, columns):
         raise DatasetError(f"{path}: {error}") from error
 
 
-def load_master(directory: Path) -> Mapping[str, CaseData]:
-    """Return immutable cases keyed by case ID in master cases.csv order."""
+def load_master(directory: Path, *, case_ids=None) -> Mapping[str, CaseData]:
+    """Return cases in master order; pass case_ids to bound memory usage."""
     metadata = {}
     for location, row in _read_table(directory / "cases.csv", HEAD["cases"]):
         case_id = row["case_id"]
-        if case_id != f"{row['group_seed']}-{row['case_no']:02d}":
-            raise DatasetError(f"{location}: case_id does not match seed and case number")
+        group = row.get("group_no", row["group_seed"])
+        if case_id != f"{group}-{row['case_no']:02d}":
+            raise DatasetError(f"{location}: case_id does not match group and case number")
         if case_id in metadata:
             raise DatasetError(f"{location}: duplicate case_id {case_id}")
         metadata[case_id] = row
     if not metadata:
         raise DatasetError(f"{directory / 'cases.csv'}: no cases")
 
-    tables = {case_id: defaultdict(list) for case_id in metadata}
+    selected = metadata.keys() if case_ids is None else set(case_ids)
+    unknown = selected - metadata.keys()
+    if unknown:
+        raise DatasetError(f"unknown case IDs: {', '.join(sorted(unknown))}")
+    tables = {case_id: defaultdict(list) for case_id in metadata if case_id in selected}
     for name, columns in HEAD.items():
         if name == "cases":
             continue
-        for location, row in _read_table(directory / f"{name}.csv", columns):
-            case_id = row["case_id"]
-            if case_id not in tables:
-                raise DatasetError(f"{location}: unknown case_id {case_id}")
-            tables[case_id][name].append(row)
+        for _, row in _read_table(directory / f"{name}.csv", columns, selected, metadata):
+            tables[row["case_id"]][name].append(row)
 
     return MappingProxyType({
         case_id: CaseData(case_id, row, MappingProxyType({
             name: tuple(tables[case_id].get(name, ()))
             for name in HEAD if name != "cases"
         }))
-        for case_id, row in metadata.items()
+        for case_id, row in metadata.items() if case_id in selected
     })

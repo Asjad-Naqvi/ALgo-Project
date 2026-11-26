@@ -16,9 +16,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     try:
-        cases = load_master(args.csv_directory)
-        if args.case_id not in cases:
-            raise ValueError(f"unknown case ID {args.case_id}")
+        cases = load_master(args.csv_directory, case_ids=(args.case_id,))
         modes = ("primary", "baseline") if args.mode == "both" else (args.mode,)
         results = {mode: run_campaign(cases[args.case_id], mode) for mode in modes}
     except ValueError as error:
