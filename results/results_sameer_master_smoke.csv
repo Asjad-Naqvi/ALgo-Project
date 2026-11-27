@@ -1,0 +1,12 @@
+module,experiment,algorithm,instance,size,size2,time_s,time_iqr_s,ops,mem_bytes,status,note
+C,scheduling,greedy,master_release_v1:1-40:windows:prefix,16,,0.000019958,0.000001416,234,296,OK,ops_unit=window_field_reads; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,weighted,master_release_v1:1-40:windows:prefix,16,,0.000027917,0.000001874,315,464,OK,ops_unit=window_field_reads; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+C,scheduling,exhaustive,master_release_v1:1-40:windows:prefix,16,,0.152379500,0.000024792,65536,440,OK,ops_unit=enumerated_subsets; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,heap,master_release_v1:1-40:incidents:prefix,64,,0.000125917,0.000002124,363,3176,OK,ops_unit=priority_comparisons; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+D,alarms,scan,master_release_v1:1-40:incidents:prefix,64,,0.000117792,0.000001250,553,3176,OK,ops_unit=priority_comparisons; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,naive,master_release_v1:1-49:radio_log:prefix,256,4,0.000049708,0.000000750,1012,0,OK,ops_unit=character_comparisons; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+E,matching,kmp,master_release_v1:1-49:radio_log:prefix,256,4,0.000028958,0.000001000,516,40,OK,ops_unit=character_comparisons; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,full_dp,master_release_v1:1-40:radio_reports:prefix,16,16,0.000040000,0.000001750,256,2536,OK,ops_unit=dp_cell_updates; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+E,edit,hirschberg,master_release_v1:1-40:radio_reports:prefix,16,16,0.000124209,0.000007376,,2896,OK,ops_unit=not_instrumented; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak
+E,compression,huffman,master_release_v1:1-49:radio_log:prefix,256,,0.000029334,0.000004500,514,3009,OK,ops_unit=symbol_visits_plus_heap_push_pop; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak; huffman_payload_bits=256; fixed6_payload_bits=1536; payload_savings_pct=83.33; excludes_codebook
+E,compression,fixed6,master_release_v1:1-49:radio_log:prefix,256,,0.000027917,0.000001250,294,6275,OK,ops_unit=symbol_encodes_plus_codebook_entries; input=master_release_v1_prefix; warmup=1; measured=5; mem=tracemalloc_peak; huffman_payload_bits=256; fixed6_payload_bits=1536; payload_savings_pct=83.33; excludes_codebook
