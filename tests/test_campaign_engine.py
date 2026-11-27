@@ -197,15 +197,15 @@ class TestFullCampaign(unittest.TestCase):
                 "roads": [
                     {
                         "road_no": 0,
-                        "u": 0, "v": 1, "minutes": 2
+                        "u": 0, "v": 1, "minutes": 2, "cable": 2
                     },
                     {
                         "road_no": 1,
-                        "u": 1, "v": 2, "minutes": 2
+                        "u": 1, "v": 2, "minutes": 2, "cable": 3
                     },
                     {
                         "road_no": 2,
-                        "u": 0, "v": 2, "minutes": 8
+                        "u": 0, "v": 2, "minutes": 8, "cable": 8
                     },
                 ],
                 "waves": [
