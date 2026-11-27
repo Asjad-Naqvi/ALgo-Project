@@ -21,6 +21,7 @@ FIELDS = [
     "count_window_ids", "value_window_ids",
     "alarm_count", "last_alarm_release_tick",
     "closed_road_nos",
+    "hq_reachable_ids", "cable_road_ids", "cable_cost",
 ]
 
 
@@ -51,6 +52,18 @@ def export_campaign(archive, output, case_ids):
             if p["alarm_dispatch"] != b["alarm_dispatch"]:
                 raise AssertionError(
                     f"Alarm disagreement: {case_id}, day {p['day']}"
+                )
+
+        # Module F: Kruskal and Prim must agree on minimum cost.
+        for p, b in zip(primary, baseline):
+            if p["cable_cost"] != b["cable_cost"]:
+                raise AssertionError(
+                    f"Cable cost disagreement: {case_id}, day {p['day']}"
+                )
+
+            if p["hq_reachable_ids"] != b["hq_reachable_ids"]:
+                raise AssertionError(
+                    f"HQ reachability disagreement: {case_id}"
                 )
 
         for mode, daily_results in (
@@ -114,6 +127,13 @@ def export_campaign(archive, output, case_ids):
                     "closed_road_nos": json.dumps(
                         result["closed_road_nos"]
                     ),
+                    "hq_reachable_ids": json.dumps(
+                        result["hq_reachable_ids"]
+                    ),
+                    "cable_road_ids": json.dumps(
+                        result["cable_road_ids"]
+                    ),
+                    "cable_cost": result["cable_cost"],
                 })
 
             print(f"{case_id} / {mode}: 7 days verified")
